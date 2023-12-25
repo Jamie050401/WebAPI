@@ -19,7 +19,7 @@ public class FeatureFlagsController : ControllerBase
     }
 
     [HttpPost, ActionName("createEdit")]
-    public virtual JsonResult CreateEdit(FeatureFlag featureFlag)
+    public JsonResult CreateEdit(FeatureFlag featureFlag)
     {
         var featureFlagInDb = _context.FeatureFlags.Find(featureFlag.Feature);
 
@@ -38,38 +38,38 @@ public class FeatureFlagsController : ControllerBase
     }
 
     [HttpGet, ActionName("get")]
-    public virtual JsonResult Get(string feature)
+    public JsonResult Get(string feature)
     {
-        var result = _context.FeatureFlags.Find(feature);
+        var featureFlagInDb = _context.FeatureFlags.Find(feature);
 
         // ReSharper disable once ConvertIfStatementToReturnStatement
-        if (result is null)
+        if (featureFlagInDb is null)
         {
             return new JsonResult(NotFound());
         }
 
-        return new JsonResult(Ok(result));
+        return new JsonResult(Ok(featureFlagInDb));
     }
 
     [HttpGet, ActionName("getAll")]
-    public virtual JsonResult GetAll()
+    public JsonResult GetAll()
     {
-        var result = _context.FeatureFlags.ToList();
+        var featureFlagInDb = _context.FeatureFlags.ToList();
 
-        return new JsonResult(Ok(result));
+        return new JsonResult(Ok(featureFlagInDb));
     }
 
     [HttpDelete, ActionName("delete")]
-    public virtual JsonResult Delete(string feature)
+    public JsonResult Delete(string feature)
     {
-        var result = _context.FeatureFlags.Find(feature);
+        var featureFlagInDb = _context.FeatureFlags.Find(feature);
 
-        if (result is null)
+        if (featureFlagInDb is null)
         {
             return new JsonResult(NotFound());
         }
 
-        _context.FeatureFlags.Remove(result);
+        _context.FeatureFlags.Remove(featureFlagInDb);
         _context.SaveChanges();
 
         return new JsonResult(NoContent());
