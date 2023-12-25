@@ -10,10 +10,12 @@ namespace WebAPI.Controllers.V2;
 public class FeatureFlagsController : V1.FeatureFlagsController
 {
     private readonly ApiContext _context;
+    private readonly IConfiguration _configuration;
 
-    public FeatureFlagsController(ApiContext context) : base(context)
+    public FeatureFlagsController(ApiContext context, IConfiguration configuration) : base(context, configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
     
     [HttpGet, ActionName("getSome")]

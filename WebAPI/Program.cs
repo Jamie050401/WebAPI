@@ -1,13 +1,21 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
-using WebAPI;
+using WebAPI.Configuration;
 using WebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApiContext>(
-    opt => opt.UseInMemoryDatabase("FeatureFlagsDb"));
+builder.Configuration.AddConfiguration(new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    // ReSharper disable once StringLiteralTypo
+    .AddJsonFile("appsettings.json")
+    .Build());
+
+builder.Services.AddEntityFrameworkSqlite().AddDbContext<ApiContext>(opt =>
+{
+    opt.UseSqlite(builder.Configuration["ConnectionStrings:FeatureFlagsDb"]);
+});
 
 builder.Services.AddApiVersioning(setup =>
 {

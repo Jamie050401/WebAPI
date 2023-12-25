@@ -10,10 +10,12 @@ namespace WebAPI.Controllers.V1;
 public class FeatureFlagsController : ControllerBase
 {
     private readonly ApiContext _context;
+    private readonly IConfiguration _configuration;
 
-    public FeatureFlagsController(ApiContext context)
+    public FeatureFlagsController(ApiContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     [HttpPost, ActionName("createEdit")]
