@@ -12,9 +12,20 @@ builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build());
 
-builder.Services.AddEntityFrameworkSqlite().AddDbContext<ApiContext>(opt =>
+builder.Services.AddDbContext<ApiContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration["ConnectionStrings:Sqlite"]);
+    var databaseType = Database.GetDatabaseType(builder.Configuration);
+
+    // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+    switch (databaseType)
+    {
+        case Database.DatabaseType.InMemory:
+            opt.UseInMemoryDatabase("Database");
+            break;
+        case Database.DatabaseType.Sqlite:
+            opt.UseSqlite(builder.Configuration["Database:ConnectionStrings:Sqlite"]);
+            break;
+    }
 });
 
 builder.Services.AddApiVersioning(setup =>
@@ -52,9 +63,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
