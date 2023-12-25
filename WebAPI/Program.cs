@@ -14,7 +14,7 @@ builder.Configuration.AddConfiguration(new ConfigurationBuilder()
 
 builder.Services.AddEntityFrameworkSqlite().AddDbContext<ApiContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration["ConnectionStrings:FeatureFlagsDb"]);
+    opt.UseSqlite(builder.Configuration["ConnectionStrings:Sqlite"]);
 });
 
 builder.Services.AddApiVersioning(setup =>
