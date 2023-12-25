@@ -21,7 +21,7 @@ public class FeatureFlagsController : ControllerBase
     }
 
     [HttpPost, ActionName("createEdit")]
-    public virtual JsonResult CreateEdit(List<FeatureFlag> featureFlags)
+    public JsonResult CreateEdit(List<FeatureFlag> featureFlags)
     {
         foreach (var featureFlag in featureFlags)
         {
