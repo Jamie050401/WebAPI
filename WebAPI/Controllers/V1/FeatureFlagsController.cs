@@ -54,9 +54,9 @@ public class FeatureFlagsController : ControllerBase
     [HttpGet, ActionName("getAll")]
     public JsonResult GetAll()
     {
-        var featureFlagInDb = _context.FeatureFlags.ToList();
+        var featureFlagsInDb = _context.FeatureFlags.ToList();
 
-        return new JsonResult(Ok(featureFlagInDb));
+        return new JsonResult(Ok(featureFlagsInDb));
     }
 
     [HttpDelete, ActionName("delete")]

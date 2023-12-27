@@ -98,4 +98,60 @@ public class FeatureFlagsController : ControllerBase
 
         return missingFeatureFlags.Count > 0 ? new JsonResult(NotFound(missingFeatureFlags)) : new JsonResult(NoContent());
     }
+    
+    [HttpPost, ActionName("toggle")]
+    public JsonResult Toggle(string feature)
+    {
+        var featureFlagInDb = _context.FeatureFlags.Find(feature);
+
+        if (featureFlagInDb is null)
+        {
+            return new JsonResult(NotFound());
+        }
+
+        featureFlagInDb.IsEnabled = !featureFlagInDb.IsEnabled;
+        _context.SaveChanges();
+
+        return new JsonResult(Ok(featureFlagInDb));
+    }
+
+    [HttpPost, ActionName("toggleSome")]
+    public JsonResult ToggleSome(List<string> features)
+    {
+        var featureFlags = new List<FeatureFlag>();
+        var missingFeatures = new List<string>();
+        foreach (var feature in features)
+        {
+            var featureFlagInDb = _context.FeatureFlags.Find(feature);
+
+            if (featureFlagInDb is not null)
+            {
+                featureFlagInDb.IsEnabled = !featureFlagInDb.IsEnabled;
+                featureFlags.Add(featureFlagInDb);
+            }
+            else
+            {
+                missingFeatures.Add(feature);
+            }
+        }
+
+        _context.SaveChanges();
+
+        return missingFeatures.Count > 0 ? new JsonResult(NotFound(featureFlags)) : new JsonResult(Ok(featureFlags));
+    }
+
+    [HttpPost, ActionName("toggleAll")]
+    public JsonResult ToggleAll()
+    {
+        var featureFlagsInDb = _context.FeatureFlags.ToList();
+
+        foreach (var featureFlag in featureFlagsInDb)
+        {
+            featureFlag.IsEnabled = !featureFlag.IsEnabled;
+        }
+
+        _context.SaveChanges();
+
+        return new JsonResult(Ok(featureFlagsInDb));
+    }
 }

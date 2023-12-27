@@ -6,6 +6,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="7.1.1" />
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.1.0" />

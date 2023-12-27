@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Configuration;
+using Environment = WebAPI.Configuration.Environment;
 using WebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,12 @@ builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build());
 
+builder.Environment.EnvironmentName = Environment.GetEnvironmentType(builder.Configuration).AsString();
+
+// TODO - Implement support for additional (environment-specific) app settings files
+
+// TODO - Implement serilog as logger of choice
+
 builder.Services.AddDbContext<ApiContext>(opt =>
 {
     var databaseType = Database.GetDatabaseType(builder.Configuration);
@@ -19,10 +26,10 @@ builder.Services.AddDbContext<ApiContext>(opt =>
     // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
     switch (databaseType)
     {
-        case Database.DatabaseType.InMemory:
+        case DatabaseType.InMemory:
             opt.UseInMemoryDatabase("Database");
             break;
-        case Database.DatabaseType.Sqlite:
+        case DatabaseType.Sqlite:
             opt.UseSqlite(builder.Configuration["Database:ConnectionStrings:Sqlite"]);
             break;
     }
@@ -46,11 +53,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 var app = builder.Build();
-var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (Environment.IsDebugEnabled(app.Configuration))
 {
+    var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
     app.UseSwagger();
     app.UseSwaggerUI(opt =>
     {

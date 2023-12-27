@@ -1,13 +1,13 @@
 ﻿namespace WebAPI.Configuration;
 
+public enum DatabaseType
+{
+    InMemory,
+    Sqlite
+}
+
 public static class Database
 {
-    public enum DatabaseType
-    {
-        InMemory,
-        Sqlite
-    }
-
     public static DatabaseType GetDatabaseType(IConfiguration configuration)
     {
         var databaseType = configuration["Database:DatabaseType"];
