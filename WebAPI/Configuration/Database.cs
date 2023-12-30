@@ -14,7 +14,7 @@ public static class Database
 
         if (databaseType is null)
         {
-            return DatabaseType.Sqlite;
+            return DatabaseType.InMemory;
         }
         
         return databaseType.Trim().ToLower() switch
