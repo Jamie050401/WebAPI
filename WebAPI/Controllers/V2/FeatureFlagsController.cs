@@ -12,12 +12,14 @@ public class FeatureFlagsController : ControllerBase
     private readonly V1.FeatureFlagsController _featureFlagsControllerV1;
     private readonly ApiContext _context;
     private readonly IConfiguration _configuration;
+    private readonly Serilog.ILogger _logger;
 
-    public FeatureFlagsController(ApiContext context, IConfiguration configuration)
+    public FeatureFlagsController(ApiContext context, IConfiguration configuration, Serilog.ILogger logger)
     {
-        _featureFlagsControllerV1 = new V1.FeatureFlagsController(context, configuration);
+        _featureFlagsControllerV1 = new V1.FeatureFlagsController(context, configuration, logger);
         _context = context;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpPost, ActionName("createEdit")]

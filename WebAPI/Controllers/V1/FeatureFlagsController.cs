@@ -11,11 +11,13 @@ public class FeatureFlagsController : ControllerBase
 {
     private readonly ApiContext _context;
     private readonly IConfiguration _configuration;
-
-    public FeatureFlagsController(ApiContext context, IConfiguration configuration)
+    private readonly Serilog.ILogger _logger;
+    
+    public FeatureFlagsController(ApiContext context, IConfiguration configuration, Serilog.ILogger logger)
     {
         _context = context;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpPost, ActionName("createEdit")]
@@ -33,7 +35,7 @@ public class FeatureFlagsController : ControllerBase
         }
 
         _context.SaveChanges();
-
+        
         return new JsonResult(Ok(featureFlag));
     }
 

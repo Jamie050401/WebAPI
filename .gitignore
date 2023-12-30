@@ -1,1 +1,2 @@
-/WebAPI/FeatureFlags.db
+/WebAPI/*.sqlite3
+/WebAPI/Logs/

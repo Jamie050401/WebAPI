@@ -1,23 +1,20 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using WebAPI.Configuration;
-using Environment = WebAPI.Configuration.Environment;
 using WebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
-    // ReSharper disable once StringLiteralTypo
     .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .Build());
 
-builder.Environment.EnvironmentName = Environment.GetEnvironmentType(builder.Configuration).AsString();
-
-// TODO - Implement support for additional (environment-specific) app settings files
-
-// TODO - Implement serilog as logger of choice
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddDbContext<ApiContext>(opt =>
 {
@@ -55,7 +52,7 @@ builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (Environment.IsDebugEnabled(app.Configuration))
+if (app.Environment.IsDevelopment())
 {
     var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
@@ -70,6 +67,7 @@ if (Environment.IsDebugEnabled(app.Configuration))
     });
 }
 
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
